@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+	<title>Bob's Burgers Characters</title>
+	<meta charset="utf-8"/>
+	<script>
+		function getCharacters() {
+			request = new XMLHttpRequest();
+			console.log("1 - request object created");
+ 
+ 
+			request.open("GET", "https://bobsburgers-api.herokuapp.com/characters/?limit=9&skip=284", true)
+
+			console.log("2 - opened request file");
+ 
+			request.onreadystatechange = function() {
+				console.log("3 - readystatechange event fired.");
+ 
+				if (request.readyState == 4 && request.status == 200) {
+
+					console.log("5 - response received");
+					result = request.responseText;
+					characters = JSON.parse(result);
+					
+					displayCharacters(characters);
+					
+				}
+				else if (request.readyState == 4 && request.status != 200) {
+
+					document.getElementById("data").innerHTML = "Something is wrong!  Check the logs to see where this went off the rails";
+
+				}
+
+				else if (request.readyState == 3) {
+
+					document.getElementById("data").innerHTML = "Too soon!  Try again";
+
+				}
+
+			}
+			request.send();
+			console.log("4 - Request sent");
+		}
+		
+		function displayCharacters(characters) {
+			var characterHTML = "<ul>";
+			for (var i = 0; i < characters.length; i++) {
+				var character = characters[i];
+				characterHTML += "<li>" + character.name + "</li>";
+			}
+			characterHTML += "</ul>";
+			
+			document.getElementById("data").innerHTML = characterHTML;
+		}
+	</script>
+</head>
+
+
+<body onload="getCharacters()">
+
+	<h1>Bob's Burgers Characters</h1>
+	<div id="data">Loading...</div>
+</body>
+</html>
