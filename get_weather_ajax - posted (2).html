@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+	<title>Bob's Burgers Characters</title>
+	<meta charset="utf-8"/>
+	<script>
+		function getCharacters() {
+			request = new XMLHttpRequest();
+			console.log("1 - request object created");
+			
+			var skip = Math.floor(Math.random() * 506); // generate a random skip value between 0 and 999
+			var url = "https://bobsburgers-api.herokuapp.com/characters/?limit=9&skip=" + skip; // construct the URL with the random skip value
+			
+			request.open("GET", url, true);
+			console.log("2 - opened request file");
+			
+			request.onreadystatechange = function() {
+				console.log("3 - readystatechange event fired.");
+				
+				if (request.readyState == 4 && request.status == 200) {
+					
+					console.log("5 - response received");
+					result = request.responseText;
+					characters = JSON.parse(result);
+					
+					displayCharacters(characters);
+					
+				}
+				else if (request.readyState == 4 && request.status != 200) {
+					
+					document.getElementById("data").innerHTML = "Something is wrong!  Check the logs to see where this went off the rails";
+					
+				}
+				
+				else if (request.readyState == 3) {
+					
+					document.getElementById("data").innerHTML = "Too soon!  Try again";
+					
+				}
+				
+			}
+			request.send();
+			console.log("4 - Request sent");
+		}
+		
+		function displayCharacters(characters) {
+		  var characterHTML = "<ul>";
+		  for (var i = 0; i < characters.length; i++) {
+			var character = characters[i];
+			characterHTML += "<li><img src='" + character.image + "' alt='" + character.name + "'/></li>";
+		  }
+		  characterHTML += "</ul>";
+		  document.getElementById("data").innerHTML = characterHTML;
+		}
+
+	</script>
+</head>
+
+
+<body onload="getCharacters()">
+
+	<h1>Bob's Burgers Characters</h1>
+	<div id="data">Loading...</div>
+	<h3>Questions</h3>
+	<p>I selected a Bob's Burgers API that prints out the characters of Bob's Burgers!</p>
+	<p>Found on <a href= "https://www.bobsburgersapi.com">this website</a>!</p>
+	<p>The options I used for this request were limit and skip! Limit sets the amount of characters to be displayed and skip skips to the number the character is in the list of characters!</p>
+	<p>This API would be helpful for a fanpage that specializes on Bob's Burgers trivia! It would also be helpful for someone who is curious about different characters because there are so many more than most people think!</p>
+</body>
+</html>
